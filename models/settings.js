@@ -108,7 +108,7 @@ const Setting = sequelize.define(
             allowNull: true,
         },
         session_timeout: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
             defaultValue: 5,
             allowNull: true,
         }
