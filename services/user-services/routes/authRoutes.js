@@ -10,7 +10,9 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
-router.post("/register", validate("body", authController.register.validation), authController.register.handler);
+router.post("/register", 
+            // validate("body", authController.register.validation), 
+            authController.register.handler);
 router.post("/login", validate("body", authController.login.validation), authController.login.handler);
 
 router.put("/update", authMiddleware, validate("body", userController.updateUser.validation), userController.updateUser.handler)
