@@ -26,9 +26,9 @@ const authController = {
         if (userExists) return res.status(400).json({ success: false, message: "Mobile Number already exists", data: null, error: "Mobile Number already exists" });
 
         role = await Role.findOne({ where: { name: role } });
-        // if (!role) {
-        //   return res.status(404).json({ success: false, message: "Role not found", data: null, error: "Role not found" })
-        // }
+        if (!role) {
+          return res.status(404).json({ success: false, message: "Role not found", data: null, error: "Role not found" })
+        }
 
         const defaultPassword = "123"
 
