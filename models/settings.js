@@ -114,7 +114,7 @@ const Setting = sequelize.define(
         }
     },
     {
-        tableName: 'users',
+        tableName: 'settings',
         timestamps: true
     }
 );
