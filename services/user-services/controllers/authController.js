@@ -17,29 +17,72 @@ const authController = {
 
     handler: async (req, res) => {
       try {
-        let { name, email, mobile_no, role } = req.body;
+        let { name, email, mobile_no, role, city } = req.body;
 
         let userExists = await User.findOne({ where: { email } });
-        if (userExists) return res.status(400).json({ success: false, message: "Email already exists", data: null, error: "Email already exists" });
+        if (userExists)
+          return res
+            .status(400)
+            .json({
+              success: false,
+              message: "Email already exists",
+              data: null,
+              error: "Email already exists",
+            });
 
         userExists = await User.findOne({ where: { mobile_no } });
-        if (userExists) return res.status(400).json({ success: false, message: "Mobile Number already exists", data: null, error: "Mobile Number already exists" });
+        if (userExists)
+          return res
+            .status(400)
+            .json({
+              success: false,
+              message: "Mobile Number already exists",
+              data: null,
+              error: "Mobile Number already exists",
+            });
 
         role = await Role.findOne({ where: { name: role } });
         if (!role) {
-          return res.status(404).json({ success: false, message: "Role not found", data: null, error: "Role not found" })
+          return res
+            .status(404)
+            .json({
+              success: false,
+              message: "Role not found",
+              data: null,
+              error: "Role not found",
+            });
         }
 
-        const defaultPassword = "123"
+        const defaultPassword = "123";
 
-        const user = await User.create({ name, email, mobile_no, password: defaultPassword, role_id: role.id });
+        const user = await User.create({
+          name,
+          email,
+          mobile_no,
+          password: defaultPassword,
+          role_id: role.id,
+          city: city,
+        });
 
         const token = generateToken(user);
 
-        res.status(201).json({ success: true, message: "User created successfully", data: { user, token } });
+        res
+          .status(201)
+          .json({
+            success: true,
+            message: "User created successfully",
+            data: { user, token },
+          });
       } catch (error) {
         console.error(error.message);
-        res.status(500).json({ success: false, message: "Server Error", data: null, error: error.message });
+        res
+          .status(500)
+          .json({
+            success: false,
+            message: "Server Error",
+            data: null,
+            error: error.message,
+          });
       }
     },
   },
@@ -55,22 +98,48 @@ const authController = {
         const { email, password } = req.body;
 
         const user = await User.findOne({ where: { email } });
-        if (!user) return res.status(400).json({ success: false, message: "Invalid Credentials", data: null, error: "Invalid Credentials" });
+        if (!user)
+          return res
+            .status(400)
+            .json({
+              success: false,
+              message: "Invalid Credentials",
+              data: null,
+              error: "Invalid Credentials",
+            });
 
         const validPassword = await bcrypt.compare(password, user.password);
-        if (!validPassword) return res.status(400).json({ success: false, message: "Invalid Credentials", data: null, error: "Invalid Credentials" });
+        if (!validPassword)
+          return res
+            .status(400)
+            .json({
+              success: false,
+              message: "Invalid Credentials",
+              data: null,
+              error: "Invalid Credentials",
+            });
 
         const token = generateToken(user);
 
-        res.json({ success: true, message: "Logged in successfully", data: { user, token } });
+        res.json({
+          success: true,
+          message: "Logged in successfully",
+          data: { user, token },
+        });
       } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, message: "Server Error", data: null, error: error.message });
+        res
+          .status(500)
+          .json({
+            success: false,
+            message: "Server Error",
+            data: null,
+            error: error.message,
+          });
       }
     },
   },
 };
-
 
 const userController = {
   updateUser: {
@@ -85,24 +154,69 @@ const userController = {
         const { id, name, email, mobile_no } = req.body;
 
         const user = await User.findByPk(id);
-        if (!user) return res.status(404).json({ success: false, message: "User not found", data: null, error: "User not found" });
+        if (!user)
+          return res
+            .status(404)
+            .json({
+              success: false,
+              message: "User not found",
+              data: null,
+              error: "User not found",
+            });
 
-        let userExists = await User.findOne({ where: { email, id: { [Op.ne]: id } } });
-        if (userExists) return res.status(400).json({ success: false, message: "Email already exists", data: null, error: "Email already exists" });
-
-        userExists = await User.findOne({ where: { mobile_no, id: { [Op.ne]: id } } });
-        if (userExists) return res.status(400).json({ success: false, message: "Mobile Number already exists", data: null, error: "Mobile Number already exists" });
-
-        await User.update({ name, email, mobile_no }, {
-          where: {
-            id
-          }
+        let userExists = await User.findOne({
+          where: { email, id: { [Op.ne]: id } },
         });
+        if (userExists)
+          return res
+            .status(400)
+            .json({
+              success: false,
+              message: "Email already exists",
+              data: null,
+              error: "Email already exists",
+            });
 
-        res.status(200).json({ success: true, message: "User updated successfully", data: null, error: null });
+        userExists = await User.findOne({
+          where: { mobile_no, id: { [Op.ne]: id } },
+        });
+        if (userExists)
+          return res
+            .status(400)
+            .json({
+              success: false,
+              message: "Mobile Number already exists",
+              data: null,
+              error: "Mobile Number already exists",
+            });
+
+        await User.update(
+          { name, email, mobile_no },
+          {
+            where: {
+              id,
+            },
+          }
+        );
+
+        res
+          .status(200)
+          .json({
+            success: true,
+            message: "User updated successfully",
+            data: null,
+            error: null,
+          });
       } catch (error) {
-        console.log(error.message)
-        res.status(500).json({ success: true, message: "Server error", data: null, error: "Server error" });
+        console.log(error.message);
+        res
+          .status(500)
+          .json({
+            success: true,
+            message: "Server error",
+            data: null,
+            error: "Server error",
+          });
       }
     },
   },
@@ -120,25 +234,63 @@ const userController = {
       try {
         const id = req.user.id;
 
-        const { site_logo, site_name, support_email, support_phone, enable_maintainance, maintainance_reason } = req.body;
+        const {
+          site_logo,
+          site_name,
+          support_email,
+          support_phone,
+          enable_maintainance,
+          maintainance_reason,
+        } = req.body;
 
         const user = await User.findByPk(id);
-        if (!user) return res.status(404).json({ success: false, message: "User not found", data: null, error: "User not found" });
+        if (!user)
+          return res
+            .status(404)
+            .json({
+              success: false,
+              message: "User not found",
+              data: null,
+              error: "User not found",
+            });
 
-        await User.update({ site_logo: req.file ? req.file.path : site_logo, site_name, support_email, support_phone, enable_maintainance, maintainance_reason }, {
-          where: {
-            id
+        await User.update(
+          {
+            site_logo: req.file ? req.file.path : site_logo,
+            site_name,
+            support_email,
+            support_phone,
+            enable_maintainance,
+            maintainance_reason,
+          },
+          {
+            where: {
+              id,
+            },
           }
-        });
+        );
 
-        res.status(200).json({ success: true, message: "setting updated successfully", data: null, error: null });
+        res
+          .status(200)
+          .json({
+            success: true,
+            message: "setting updated successfully",
+            data: null,
+            error: null,
+          });
       } catch (error) {
-        console.log(error.message)
-        res.status(500).json({ success: true, message: "Server error", data: null, error: "Server error" });
+        console.log(error.message);
+        res
+          .status(500)
+          .json({
+            success: true,
+            message: "Server error",
+            data: null,
+            error: "Server error",
+          });
       }
     },
   },
 };
-
 
 module.exports = { authController, userController };

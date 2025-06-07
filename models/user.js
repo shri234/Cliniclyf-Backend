@@ -32,10 +32,10 @@ const User = sequelize.define(
       type: DataTypes.UUID,
       allowNull: false,
       references: {
-        model: 'roles', // Refers to `roles` table
-        key: 'id',
+        model: "roles", // Refers to `roles` table
+        key: "id",
       },
-      onDelete: 'CASCADE',
+      onDelete: "CASCADE",
     },
     site_logo: {
       type: DataTypes.STRING,
@@ -55,20 +55,24 @@ const User = sequelize.define(
     },
     enable_maintainance: {
       type: DataTypes.BOOLEAN,
-      allowNull: true
+      allowNull: true,
     },
     maintainance_reason: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
     },
     is_active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
-    }
+    },
+    city: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
-    tableName: 'users',
-    timestamps: true
+    tableName: "users",
+    timestamps: true,
   }
 );
 
@@ -76,6 +80,5 @@ const User = sequelize.define(
 User.beforeCreate(async (user) => {
   user.password = await bcrypt.hash(user.password, 10);
 });
-
 
 module.exports = User;
