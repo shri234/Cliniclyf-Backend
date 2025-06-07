@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 
 const authRoutes = require("./services/user-services/routes/authRoutes");
+const roleRoutes = require("./services/user-services/routes/roleRoutes");
 const clinicRoutes = require("./services/user-services/routes/clinicRoutes");
 const doctorRoutes = require("./services/user-services/routes/doctorRoutes");
 const planRoutes = require("./services/user-services/routes/planRoutes");
@@ -23,15 +24,18 @@ startAndSyncDB();
 
 // Middlewares
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }))
-app.use(cors({
-    origin: ['http://localhost:3000']
-}));
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+  })
+);
 app.use(helmet());
 app.use(morgan("dev"));
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/role", roleRoutes);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/plan", planRoutes);
 app.use("/api/order", orderRoutes);
@@ -41,7 +45,6 @@ app.use("/api/admin/dashboard", dashboardRoutes);
 app.use("/api/rating", ratingRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/settings", settingsRoutes);
-
 
 const PORT = process.env.PORT || 6000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
